@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Markus Clock</string>
+    <string name="play">Play</string>
+    <string name="sleep">Sleep</string>
+    <string name="start">Start</string>
+    <string name="time_format">%02d:%02d</string>
+    <string name="select_activity">Select activity</string>
+    <string name="set_duration">Set duration (minutes)</string>
+    <string name="set_time_range">Set Time Range</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="stop">Stop</string>
+    <string name="theme">Theme</string>
+    <string name="select_wallpaper">Select Wallpaper</string>
+</resources> 

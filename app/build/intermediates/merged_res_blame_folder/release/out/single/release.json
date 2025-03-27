@@ -1,0 +1,78 @@
+[
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.markus.clock.app-main-5:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/xml_data_extraction_rules.xml.flat",
+        "source": "com.markus.clock.app-main-5:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/drawable-xxhdpi_mario_party.jpg.flat",
+        "source": "com.markus.clock.app-main-5:/drawable-xxhdpi/mario_party.jpg"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/drawable-xxhdpi_kirby.jpg.flat",
+        "source": "com.markus.clock.app-main-5:/drawable-xxhdpi/kirby.jpg"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.markus.clock.app-main-5:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/mipmap-xhdpi_ic_launcher_round.xml.flat",
+        "source": "com.markus.clock.app-main-5:/mipmap-xhdpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/xml_backup_rules.xml.flat",
+        "source": "com.markus.clock.app-main-5:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/drawable-xxhdpi_gaming.jpg.flat",
+        "source": "com.markus.clock.app-main-5:/drawable-xxhdpi/gaming.jpg"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/mipmap-mdpi_ic_launcher_round.xml.flat",
+        "source": "com.markus.clock.app-main-5:/mipmap-mdpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/mipmap-xhdpi_ic_launcher_foreground.xml.flat",
+        "source": "com.markus.clock.app-main-5:/mipmap-xhdpi/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/mipmap-hdpi_ic_launcher_foreground.xml.flat",
+        "source": "com.markus.clock.app-main-5:/mipmap-hdpi/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/mipmap-mdpi_ic_launcher.xml.flat",
+        "source": "com.markus.clock.app-main-5:/mipmap-mdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/mipmap-xhdpi_ic_launcher.xml.flat",
+        "source": "com.markus.clock.app-main-5:/mipmap-xhdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/drawable-xxhdpi_letters.jpg.flat",
+        "source": "com.markus.clock.app-main-5:/drawable-xxhdpi/letters.jpg"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/mipmap-hdpi_ic_launcher_round.xml.flat",
+        "source": "com.markus.clock.app-main-5:/mipmap-hdpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/drawable_toys_background.xml.flat",
+        "source": "com.markus.clock.app-main-5:/drawable/toys_background.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/mipmap-mdpi_ic_launcher_foreground.xml.flat",
+        "source": "com.markus.clock.app-main-5:/mipmap-mdpi/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/drawable_stars_background.xml.flat",
+        "source": "com.markus.clock.app-main-5:/drawable/stars_background.xml"
+    },
+    {
+        "merged": "com.markus.clock.app-merged_res-4:/mipmap-hdpi_ic_launcher.xml.flat",
+        "source": "com.markus.clock.app-main-5:/mipmap-hdpi/ic_launcher.xml"
+    }
+]
