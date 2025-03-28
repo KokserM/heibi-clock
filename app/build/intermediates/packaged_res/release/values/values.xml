@@ -12,11 +12,18 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="white">#FFFFFFFF</color>
+    <string name="activity_name">Activity Name</string>
+    <string name="add_activity">Add Activity</string>
     <string name="app_name">Markus Clock</string>
     <string name="cancel">Cancel</string>
+    <string name="current_activity">Current Activity</string>
+    <string name="edit_activity">Edit Activity</string>
     <string name="from">From</string>
+    <string name="next_activity">Next Activity</string>
     <string name="ok">OK</string>
     <string name="play">Play</string>
+    <string name="save">Save</string>
+    <string name="scheduled_activities">Scheduled Activities</string>
     <string name="select_activity">Select activity</string>
     <string name="select_wallpaper">Select Wallpaper</string>
     <string name="set_duration">Set duration (minutes)</string>
@@ -27,5 +34,6 @@
     <string name="theme">Theme</string>
     <string name="time_format">%02d:%02d</string>
     <string name="to">To</string>
+    <string name="unnamed_activity">Unnamed Activity</string>
     <style name="Theme.MarkusClock" parent="android:Theme.Material.Light.NoActionBar"/>
 </resources>

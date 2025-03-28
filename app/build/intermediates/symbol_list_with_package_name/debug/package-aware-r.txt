@@ -183,6 +183,8 @@ layout notification_template_part_time
 mipmap ic_launcher
 mipmap ic_launcher_foreground
 mipmap ic_launcher_round
+string activity_name
+string add_activity
 string androidx_startup
 string app_name
 string call_notification_answer_action
@@ -195,9 +197,11 @@ string call_notification_screening_text
 string cancel
 string close_drawer
 string close_sheet
+string current_activity
 string default_error_message
 string default_popup_window_title
 string dropdown_menu
+string edit_activity
 string from
 string in_progress
 string indeterminate
@@ -258,6 +262,7 @@ string m3c_time_picker_pm
 string m3c_tooltip_long_press_label
 string m3c_tooltip_pane_description
 string navigation_menu
+string next_activity
 string not_selected
 string off
 string ok
@@ -265,6 +270,8 @@ string on
 string play
 string range_end
 string range_start
+string save
+string scheduled_activities
 string select_activity
 string select_wallpaper
 string selected
@@ -282,6 +289,7 @@ string time_format
 string to
 string tooltip_description
 string tooltip_label
+string unnamed_activity
 style DialogWindowTheme
 style FloatingDialogTheme
 style FloatingDialogWindowTheme

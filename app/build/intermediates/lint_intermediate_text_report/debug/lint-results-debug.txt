@@ -158,27 +158,27 @@ C:\Projects\Hobby\markus-clock\app\src\main\res\values\colors.xml:13: Warning: T
 C:\Projects\Hobby\markus-clock\app\src\main\res\drawable\stars_background.xml:2: Warning: The resource R.drawable.stars_background appears to be unused [UnusedResources]
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
 ^
+C:\Projects\Hobby\markus-clock\app\src\main\res\values\strings.xml:4: Warning: The resource R.string.play appears to be unused [UnusedResources]
+    <string name="play">Play</string>
+            ~~~~~~~~~~~
+C:\Projects\Hobby\markus-clock\app\src\main\res\values\strings.xml:5: Warning: The resource R.string.sleep appears to be unused [UnusedResources]
+    <string name="sleep">Sleep</string>
+            ~~~~~~~~~~~~
 C:\Projects\Hobby\markus-clock\app\src\main\res\values\strings.xml:7: Warning: The resource R.string.time_format appears to be unused [UnusedResources]
     <string name="time_format">%02d:%02d</string>
             ~~~~~~~~~~~~~~~~~~
+C:\Projects\Hobby\markus-clock\app\src\main\res\values\strings.xml:8: Warning: The resource R.string.select_activity appears to be unused [UnusedResources]
+    <string name="select_activity">Select activity</string>
+            ~~~~~~~~~~~~~~~~~~~~~~
 C:\Projects\Hobby\markus-clock\app\src\main\res\values\strings.xml:9: Warning: The resource R.string.set_duration appears to be unused [UnusedResources]
     <string name="set_duration">Set duration (minutes)</string>
             ~~~~~~~~~~~~~~~~~~~
 C:\Projects\Hobby\markus-clock\app\src\main\res\values\strings.xml:10: Warning: The resource R.string.set_time_range appears to be unused [UnusedResources]
     <string name="set_time_range">Set Time Range</string>
             ~~~~~~~~~~~~~~~~~~~~~
-C:\Projects\Hobby\markus-clock\app\src\main\res\values\strings.xml:11: Warning: The resource R.string.from appears to be unused [UnusedResources]
-    <string name="from">From</string>
-            ~~~~~~~~~~~
-C:\Projects\Hobby\markus-clock\app\src\main\res\values\strings.xml:12: Warning: The resource R.string.to appears to be unused [UnusedResources]
-    <string name="to">To</string>
-            ~~~~~~~~~
 C:\Projects\Hobby\markus-clock\app\src\main\res\values\strings.xml:13: Warning: The resource R.string.ok appears to be unused [UnusedResources]
     <string name="ok">OK</string>
             ~~~~~~~~~
-C:\Projects\Hobby\markus-clock\app\src\main\res\values\strings.xml:14: Warning: The resource R.string.cancel appears to be unused [UnusedResources]
-    <string name="cancel">Cancel</string>
-            ~~~~~~~~~~~~~
 C:\Projects\Hobby\markus-clock\app\src\main\res\drawable\toys_background.xml:2: Warning: The resource R.drawable.toys_background appears to be unused [UnusedResources]
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
 ^

@@ -1,0 +1,16 @@
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\data\ActivityRepository.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\data\ActivityEntity.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\ui\ClockScreen.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\viewmodel\TimerViewModel.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\data\ActivityDao.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\data\AppPreferences.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\model\ActivityType.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\viewmodel\TimerViewModelFactory.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\ui\theme\Color.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\MainActivity.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\model\Wallpapers.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\model\Activity.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\model\BackgroundImage.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\data\AppDatabase.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\ui\theme\Type.kt
+C:\Projects\Hobby\markus-clock\app\src\main\java\com\markus\clock\ui\theme\Theme.kt

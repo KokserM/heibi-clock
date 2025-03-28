@@ -21,11 +21,18 @@ drawable toys_background
 mipmap ic_launcher
 mipmap ic_launcher_foreground
 mipmap ic_launcher_round
+string activity_name
+string add_activity
 string app_name
 string cancel
+string current_activity
+string edit_activity
 string from
+string next_activity
 string ok
 string play
+string save
+string scheduled_activities
 string select_activity
 string select_wallpaper
 string set_duration
@@ -36,6 +43,7 @@ string stop
 string theme
 string time_format
 string to
+string unnamed_activity
 style Theme.MarkusClock
 xml backup_rules
 xml data_extraction_rules

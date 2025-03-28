@@ -1,12 +1,15 @@
 package com.markus.clock.ui
 
 import android.graphics.Paint as AndroidPaint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.repeatable
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,17 +22,33 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -64,7 +83,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.markus.clock.R
-import com.markus.clock.model.ActivityType
+import com.markus.clock.model.Activity
 import com.markus.clock.model.Wallpapers
 import com.markus.clock.ui.theme.PlayPrimary
 import com.markus.clock.ui.theme.PlaySecondary
@@ -73,6 +92,7 @@ import com.markus.clock.ui.theme.SleepSecondary
 import com.markus.clock.viewmodel.TimerViewModel
 import com.markus.clock.viewmodel.MinuteArcSegment
 import com.markus.clock.viewmodel.HourArcSegment
+import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin
 import androidx.compose.ui.graphics.nativeCanvas
@@ -80,25 +100,16 @@ import androidx.compose.ui.graphics.nativeCanvas
 @Composable
 fun ClockScreen(timerViewModel: TimerViewModel) {
     // Get the current state from the ViewModel
-    val activityType by timerViewModel.activityType.collectAsState()
+    val activities by timerViewModel.activities.collectAsState()
+    val currentActivity by timerViewModel.currentActivity.collectAsState()
     val isTimerRunning by timerViewModel.isTimerRunning.collectAsState()
-    val progress by timerViewModel.progress.collectAsState()
-    val isEndTimeReached by timerViewModel.isEndTimeReached.collectAsState()
+    val isAllActivitiesCompleted by timerViewModel.isAllActivitiesCompleted.collectAsState()
+    val recentlyCompletedActivity by timerViewModel.recentlyCompletedActivity.collectAsState()
     
     // Get current time
     val hour by timerViewModel.currentHour.collectAsState()
     val minute by timerViewModel.currentMinute.collectAsState()
     val second by timerViewModel.currentSecond.collectAsState()
-    
-    // Get timer time ranges
-    val startTimeMinutes by timerViewModel.startTimeMinutes.collectAsState()
-    val endTimeMinutes by timerViewModel.endTimeMinutes.collectAsState()
-    
-    // Calculate start and end times for display
-    val startHour = startTimeMinutes / 60
-    val startMinute = startTimeMinutes % 60
-    val endHour = endTimeMinutes / 60
-    val endMinute = endTimeMinutes % 60
     
     // Clock hands
     val secondHandRotation = remember { Animatable(initialValue = 0f) }
@@ -108,25 +119,29 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
     // Zoom animation for end time reached
     val zoomScale = remember { Animatable(initialValue = 1f) }
     
-    // Start zoom animation when end time is reached
-    LaunchedEffect(isEndTimeReached) {
-        if (isEndTimeReached) {
+    // Activity notification
+    val showCompletionNotification = remember { mutableStateOf(false) }
+    val completedActivityName = remember { mutableStateOf("") }
+    
+    // Start zoom animation when all activities are completed
+    LaunchedEffect(isAllActivitiesCompleted) {
+        if (isAllActivitiesCompleted) {
             // Run a repeating animation that zooms in and out
             repeat(3) {
-                // Zoom in - more subtle (1.2 instead of 1.5)
+                // Zoom in
                 zoomScale.animateTo(
                     targetValue = 1.2f,
                     animationSpec = tween(
-                        durationMillis = 800, // Slower animation (800ms instead of 500ms)
+                        durationMillis = 800,
                         easing = LinearEasing
                     )
                 )
                 
-                // Zoom out - more subtle (0.9 instead of 0.8)
+                // Zoom out
                 zoomScale.animateTo(
                     targetValue = 0.9f,
                     animationSpec = tween(
-                        durationMillis = 800, // Slower animation (800ms instead of 500ms)
+                        durationMillis = 800,
                         easing = LinearEasing
                     )
                 )
@@ -142,6 +157,19 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
             )
         } else {
             zoomScale.snapTo(1f)
+        }
+    }
+    
+    // Show notification when activity is completed
+    LaunchedEffect(recentlyCompletedActivity) {
+        if (recentlyCompletedActivity != null) {
+            completedActivityName.value = recentlyCompletedActivity?.name ?: ""
+            showCompletionNotification.value = true
+            
+            // Automatically hide notification after 3 seconds
+            delay(3000)
+            showCompletionNotification.value = false
+            timerViewModel.clearCompletionNotification()
         }
     }
     
@@ -178,27 +206,17 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
         label = "secondAngle"
     )
     
-    // Get animated progress for smooth transitions
-    val animatedProgress by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = tween(durationMillis = 300),
-        label = "progress"
-    )
-    
     // Get colors based on activity type
-    val (primaryColor, secondaryColor) = when (activityType) {
-        ActivityType.PLAY -> Pair(PlayPrimary, PlaySecondary)
-        ActivityType.SLEEP -> Pair(SleepPrimary, SleepSecondary)
-    }
+    val primaryColor = Color(0xFF4CAF50) // Default to green color
+    val secondaryColor = Color(0xFFF44336) // Red color for stop button
     
     // Get selected wallpaper
     val wallpaperId by timerViewModel.selectedWallpaperId.collectAsState()
     val wallpaper = Wallpapers.getWallpaperById(wallpaperId)
     
-    // Track time selection dialogs
-    var showStartTimePicker by remember { mutableStateOf(false) }
-    var showEndTimePicker by remember { mutableStateOf(false) }
+    // Track dialogs state
     var showWallpaperSelector by remember { mutableStateOf(false) }
+    var showActivityEditor by remember { mutableStateOf(false) }
     
     // Full screen container
     Box(
@@ -214,6 +232,25 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
             contentScale = ContentScale.Crop,
             alignment = Alignment.Center
         )
+        
+        // Activity completion notification
+        AnimatedVisibility(
+            visible = showCompletionNotification.value,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 72.dp)
+        ) {
+            Snackbar(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Activity completed: ${completedActivityName.value}",
+                    color = Color.White
+                )
+            }
+        }
         
         // Content column
         Column(
@@ -270,13 +307,14 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
                 Canvas(
                     modifier = Modifier
                         .size(280.dp)
+                        .offset(y = if (isTimerRunning) (-40).dp else 0.dp) // Only offset when timer is running
                 ) {
                     // Apply the zoom scale animation
                     scale(zoomScale.value) {
                         // Add dark circular overlay to improve contrast with bright backgrounds
                         drawCircle(
-                            color = Color.Black.copy(alpha = 0.70f),  // Increased opacity to 70%
-                            radius = size.minDimension / 2 + 40f  // Made the background larger
+                            color = Color.Black.copy(alpha = 0.70f),
+                            radius = size.minDimension / 2 + 40f
                         )
                         
                         // Draw clock face
@@ -285,140 +323,63 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
                         // Draw hour numbers
                         drawHourNumbers()
                         
-                        // Draw timer arc if timer is running OR when times are set (for preview)
-                        if (!isEndTimeReached && (isTimerRunning || (startTimeMinutes > 0 && endTimeMinutes > 0))) {
-                            // Hour arc properties
-                            val hourArcSize = Size(size.width * 0.95f, size.height * 0.95f)
-                            val hourArcOffset = Offset(
-                                (size.width - hourArcSize.width) / 2f,
-                                (size.height - hourArcSize.height) / 2f
-                            )
+                        // Draw arcs for activities if timer is running or activities exist
+                        if (isTimerRunning || activities.isNotEmpty()) {
+                            // Get hour arc segments
+                            val hourSegments = timerViewModel.getHourArcSegments()
                             
-                            // Get the hour arc segment
-                            val hourArcSegment = if (isTimerRunning) {
-                                // Convert from TimerViewModel.HourArcSegment to our local HourArcSegment
-                                timerViewModel.getHourArcSegment()?.let { 
-                                    println("Using hour arc from ViewModel: startAngle=${it.startAngle}, sweepAngle=${it.sweepAngle}")
-                                    HourArcSegment(it.startAngle, it.sweepAngle) 
-                                }
-                            } else if (startTimeMinutes > 0 && endTimeMinutes > 0) {
-                                // For preview when timer is not running - Use the ViewModel function directly
-                                timerViewModel.getInitialHourArcSegment()?.let {
-                                    println("Using preview hour arc: startAngle=${it.startAngle}, sweepAngle=${it.sweepAngle}")
-                                    HourArcSegment(it.startAngle, it.sweepAngle)
-                                } ?: run {
-                                    // Fallback to manual calculation if ViewModel returns null
-                                    val startHourPosition = startHour % 12 + (startMinute / 60f)
-                                    val endHourPosition = endHour % 12 + (endMinute / 60f)
-                                    
-                                    val startAngle = (startHourPosition * 30f) - 90f
-                                    val endAngle = (endHourPosition * 30f) - 90f
-                                    
-                                    // Calculate sweep angle, handling midnight crossing
-                                    val sweepAngle = if (endHourPosition < startHourPosition) {
-                                        (360f - startAngle) + endAngle // Crosses midnight
-                                    } else {
-                                        endAngle - startAngle
-                                    }
-                                    
-                                    println("Manually calculated hour arc: startAngle=$startAngle, sweepAngle=$sweepAngle")
-                                    
-                                    // Safety check - ensure we have a visible arc
-                                    if (sweepAngle <= 0.5f) {
-                                        HourArcSegment(startAngle, 30f) // Show at least 30 degrees
-                                    } else {
-                                        HourArcSegment(startAngle, sweepAngle)
-                                    }
-                                }
-                            } else {
-                                null
-                            }
-                            
-                            // Draw hour arc if there's a segment to show
-                            hourArcSegment?.let { segment ->
-                                // Debug logging
-                                println("Drawing hour arc: startAngle=${segment.startAngle}, sweepAngle=${segment.sweepAngle}, endAngle=${segment.startAngle + segment.sweepAngle}")
-
-                                // Draw filled pie segment for hour arc with solid color
+                            // Draw hour arcs
+                            if (hourSegments.isNotEmpty()) {
+                                val clockRadius = size.minDimension / 2
                                 val strokeWidth = 48f
-                                val clockRadius = size.minDimension / 2  // 140.dp (~420px)
-                                val hourArcSize = Size(
-                                    (clockRadius - strokeWidth / 2) * 2,  // Diameter adjusted for stroke
-                                    (clockRadius - strokeWidth / 2) * 2
-                                )
-                                val hourArcOffset = Offset(
-                                    clockRadius - hourArcSize.width / 2,  // Center horizontally
-                                    clockRadius - hourArcSize.height / 2  // Center vertically
-                                )
-
-                                drawArc(
-                                    color = Color(0xFFE3D10E), // Solid yellow color (#e3d10e)
-                                    startAngle = segment.startAngle,
-                                    sweepAngle = segment.sweepAngle,
-                                    useCenter = false,
-                                    size = hourArcSize,
-                                    topLeft = hourArcOffset,
-                                    alpha = 0.9f,
-                                    style = Stroke(width = strokeWidth)
-                                )
-                            }
-                            
-                            // Minute arc properties
-                            val minuteArcSize = Size(size.width * 0.8f, size.height * 0.8f)
-                            val minuteArcOffset = Offset(
-                                (size.width - minuteArcSize.width) / 2f,
-                                (size.height - minuteArcSize.height) / 2f
-                            )
-                            
-                            // Get minute arc segments (handles hour boundary crossing)
-                            val minuteArcSegments = if (isTimerRunning) {
-                                // Convert from TimerViewModel.MinuteArcSegment to our local MinuteArcSegment
-                                println("Getting minute segments for running timer")
-                                timerViewModel.getMinuteArcSegments().map { 
-                                    MinuteArcSegment(it.startAngle, it.sweepAngle) 
-                                }
-                            } else if (startTimeMinutes > 0 && endTimeMinutes > 0) {
-                                // Show preview arcs when timer is not running but times are set
-                                // Use the getInitialMinuteArcSegments from ViewModel instead of creating our own
-                                println("Getting initial minute segments for preview (timer not running)")
-                                timerViewModel.getInitialMinuteArcSegments().map {
-                                    MinuteArcSegment(it.startAngle, it.sweepAngle)
-                                }
-                            } else {
-                                println("No conditions met for minute segments, returning empty list")
-                                emptyList()
-                            }
-                            
-                            // Log segments for debugging
-                            if (minuteArcSegments.isNotEmpty()) {
-                                println("Total minute segments: ${minuteArcSegments.size}")
-                                minuteArcSegments.forEachIndexed { index, segment ->
-                                    println("Minute segment $index: startAngle=${segment.startAngle}, sweepAngle=${segment.sweepAngle}, endAngle=${segment.startAngle + segment.sweepAngle}")
-                                }
-                            } else {
-                                println("WARNING: No minute segments to draw!")
-                            }
-                            
-                            // Draw each minute arc segment
-                            minuteArcSegments.forEachIndexed { index, segment ->
-                                // Skip segments with zero or tiny sweep angles
-                                if (segment.sweepAngle < 0.05f) {
-                                    println("Skipping too small segment $index: sweepAngle=${segment.sweepAngle}")
-                                    return@forEachIndexed
-                                }
                                 
-                                println("Drawing segment $index: startAngle=${segment.startAngle}, sweepAngle=${segment.sweepAngle}")
-                                
-                                // Draw with solid color instead of gradient
-                                drawArc(
-                                    color = Color(0xFFA7E810), // Solid green color (#a7e810) for minute wedge
-                                    startAngle = segment.startAngle,
-                                    sweepAngle = segment.sweepAngle,
-                                    useCenter = true,
-                                    size = minuteArcSize,
-                                    topLeft = minuteArcOffset,
-                                    alpha = 0.8f // Slight transparency for better appearance
+                                // Draw segments in reverse order so earlier activities appear on top
+                                hourSegments.reversed().forEach { segment ->
+                                    val hourArcSize = Size(
+                                        (clockRadius - strokeWidth / 2) * 2,
+                                        (clockRadius - strokeWidth / 2) * 2
+                                    )
+                                    val hourArcOffset = Offset(
+                                        clockRadius - hourArcSize.width / 2,
+                                        clockRadius - hourArcSize.height / 2
+                                    )
+                                    
+                                    drawArc(
+                                        color = segment.color,
+                                        startAngle = segment.startAngle,
+                                        sweepAngle = segment.sweepAngle,
+                                        useCenter = false,
+                                        size = hourArcSize,
+                                        topLeft = hourArcOffset,
+                                        alpha = 0.9f,
+                                        style = Stroke(width = strokeWidth)
+                                    )
+                                }
+                            }
+                            
+                            // Get minute arc segments
+                            val minuteSegments = timerViewModel.getMinuteArcSegments()
+                            
+                            // Draw minute arcs
+                            if (minuteSegments.isNotEmpty()) {
+                                val minuteArcSize = Size(size.width * 0.8f, size.height * 0.8f)
+                                val minuteArcOffset = Offset(
+                                    (size.width - minuteArcSize.width) / 2f,
+                                    (size.height - minuteArcSize.height) / 2f
                                 )
+                                
+                                // Draw segments in reverse order so earlier activities appear on top
+                                minuteSegments.reversed().forEach { segment ->
+                                    drawArc(
+                                        color = segment.color,
+                                        startAngle = segment.startAngle,
+                                        sweepAngle = segment.sweepAngle,
+                                        useCenter = true,
+                                        size = minuteArcSize,
+                                        topLeft = minuteArcOffset,
+                                        alpha = 0.8f
+                                    )
+                                }
                             }
                         }
                         
@@ -437,7 +398,7 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
                         
                         // Draw second hand
                         rotate(secondAngle) {
-                            drawSecondHand(primaryColor)
+                            drawSecondHand(Color(0xFFFF1744))
                         }
                         
                         // Draw center pin
@@ -452,13 +413,13 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
                             center = center
                         )
                         drawCircle(
-                            color = primaryColor,
+                            color = Color(0xFFFF1744),
                             radius = 6f,
                             center = center
                         )
                         
-                        // If end time is reached, draw "TIME'S UP!" text
-                        if (isEndTimeReached) {
+                        // If all activities completed, draw "TIME'S UP!" text
+                        if (isAllActivitiesCompleted) {
                             val textPaint = android.graphics.Paint().apply {
                                 color = android.graphics.Color.WHITE
                                 textSize = size.minDimension / 6
@@ -470,9 +431,60 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
                             drawContext.canvas.nativeCanvas.drawText(
                                 "TIME'S UP!",
                                 center.x,
-                                center.y + textPaint.textSize / 3, // Adjust for vertical centering
+                                center.y + textPaint.textSize / 3,
                                 textPaint
                             )
+                        }
+                    }
+                }
+                
+                // Current and upcoming activities info
+                if (isTimerRunning && activities.isNotEmpty()) {
+                    val currentTimeMinutes = hour * 60 + minute
+                    val sortedActivities = activities.sortedBy { it.startTimeMinutes }
+                    
+                    // Find current activity (the one that's currently active)
+                    val currentActivity = sortedActivities.firstOrNull { activity ->
+                        currentTimeMinutes >= activity.startTimeMinutes && 
+                        currentTimeMinutes < activity.endTimeMinutes
+                    }
+                    
+                    // Find next activity (the one that starts after current activity ends)
+                    val nextActivity = if (currentActivity != null) {
+                        sortedActivities.firstOrNull { activity ->
+                            activity.startTimeMinutes >= currentActivity.endTimeMinutes
+                        }
+                    } else {
+                        // If no current activity, find the next upcoming activity
+                        sortedActivities.firstOrNull { activity ->
+                            activity.startTimeMinutes > currentTimeMinutes
+                        }
+                    }
+                    
+                    if (currentActivity != null || nextActivity != null) {
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 16.dp)
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            // Current activity
+                            currentActivity?.let { activity ->
+                                ActivityInfoCard(
+                                    activity = activity,
+                                    isCurrent = true,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                            }
+                            
+                            // Next activity
+                            nextActivity?.let { activity ->
+                                ActivityInfoCard(
+                                    activity = activity,
+                                    isCurrent = false
+                                )
+                            }
                         }
                     }
                 }
@@ -480,18 +492,15 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
             
             // Controls
             if (!isTimerRunning) {
-                ControlsSection(
-                    activityType = activityType,
-                    startTime = timerViewModel.formatStartTime(),
-                    endTime = timerViewModel.formatEndTime(),
-                    primaryColor = primaryColor,
-                    onActivityTypeSelected = { timerViewModel.setActivityType(it) },
-                    onStartTimeClicked = { showStartTimePicker = true },
-                    onEndTimeClicked = { showEndTimePicker = true },
+                ActivitiesControlSection(
+                    activities = activities,
+                    onAddActivity = { timerViewModel.createNewActivity(); showActivityEditor = true },
+                    onEditActivity = { timerViewModel.setCurrentActivity(it); showActivityEditor = true },
+                    onDeleteActivity = { timerViewModel.deleteActivity(it) },
                     onStartClicked = { timerViewModel.startTimer() }
                 )
             } else {
-                if (isEndTimeReached) {
+                if (isAllActivitiesCompleted) {
                     // Show "Time's Up!" button with simpler text
                     Button(
                         onClick = { timerViewModel.stopTimer() },
@@ -525,23 +534,28 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
         }
     }
     
-    // Time picker dialogs
-    if (showStartTimePicker) {
-        TimePickerDialog(
-            onDismiss = { showStartTimePicker = false },
-            onConfirm = { hour, minute ->
-                timerViewModel.setStartTime(hour, minute)
-                showStartTimePicker = false
-            }
-        )
-    }
-    
-    if (showEndTimePicker) {
-        TimePickerDialog(
-            onDismiss = { showEndTimePicker = false },
-            onConfirm = { hour, minute ->
-                timerViewModel.setEndTime(hour, minute)
-                showEndTimePicker = false
+    // Show ActivityEditor Dialog
+    if (showActivityEditor && currentActivity != null) {
+        ActivityEditorDialog(
+            activity = currentActivity!!,
+            onDismiss = { 
+                timerViewModel.setCurrentActivity(null)
+                showActivityEditor = false 
+            },
+            onSave = { name, startHour, startMinute, endHour, endMinute ->
+                if (timerViewModel.isNewActivity()) {
+                    // Create new activity
+                    timerViewModel.createActivity(name, startHour, startMinute, endHour, endMinute)
+                } else {
+                    // Update existing activity
+                    val updatedActivity = currentActivity!!.copy(
+                        name = name,
+                        startTimeMinutes = startHour * 60 + startMinute,
+                        endTimeMinutes = endHour * 60 + endMinute
+                    )
+                    timerViewModel.updateActivity(updatedActivity)
+                }
+                showActivityEditor = false
             }
         )
     }
@@ -561,10 +575,15 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerDialog(
+    initialHour: Int = 0,
+    initialMinute: Int = 0,
     onDismiss: () -> Unit,
     onConfirm: (hour: Int, minute: Int) -> Unit
 ) {
-    val timePickerState = rememberTimePickerState()
+    val timePickerState = rememberTimePickerState(
+        initialHour = initialHour,
+        initialMinute = initialMinute
+    )
     
     Dialog(onDismissRequest = onDismiss) {
         Column(
@@ -675,6 +694,316 @@ fun WallpaperSelectorDialog(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ActivitiesControlSection(
+    activities: List<Activity>,
+    onAddActivity: () -> Unit,
+    onEditActivity: (Activity) -> Unit,
+    onDeleteActivity: (String) -> Unit,
+    onStartClicked: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Activities list with fixed height
+        if (activities.isNotEmpty()) {
+            Text(
+                text = stringResource(R.string.scheduled_activities),
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            
+            // Fixed height container for activities list
+            Box(
+                modifier = Modifier
+                    .height(200.dp) // Fixed height for the activities list
+                    .fillMaxWidth()
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(activities) { activity ->
+                        ActivityItem(
+                            activity = activity,
+                            onEdit = { onEditActivity(activity) },
+                            onDelete = { onDeleteActivity(activity.id) }
+                        )
+                    }
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        
+        // Add Activity button
+        FloatingActionButton(
+            onClick = onAddActivity,
+            modifier = Modifier.padding(bottom = 16.dp),
+            containerColor = Color(0xFF4CAF50)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Activity"
+            )
+        }
+        
+        // Start button
+        Button(
+            onClick = onStartClicked,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF4CAF50) // Green color for start button
+            ),
+            modifier = Modifier
+                .fillMaxWidth(),
+            enabled = activities.isNotEmpty()
+        ) {
+            Text(
+                text = stringResource(R.string.start),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
+
+@Composable
+fun ActivityItem(
+    activity: Activity,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0x33FFFFFF)
+        ),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Color indicators
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                // Color dots for hour and minute arcs
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .background(activity.hourColor, RoundedCornerShape(6.dp))
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .background(activity.minuteColor, RoundedCornerShape(6.dp))
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                
+                // Activity name and time range
+                Column {
+                    Text(
+                        text = activity.name.ifEmpty { stringResource(R.string.unnamed_activity) },
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    
+                    Text(
+                        text = "${formatTimeForDisplay(activity.startTimeMinutes)} - ${formatTimeForDisplay(activity.endTimeMinutes)}",
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+            
+            // Action buttons
+            Row {
+                IconButton(onClick = onEdit) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit",
+                        tint = Color.White
+                    )
+                }
+                
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        tint = Color.White
+                    )
+                }
+            }
+        }
+    }
+}
+
+// Helper function to format time
+private fun formatTimeForDisplay(minutes: Int): String {
+    val hours = minutes / 60
+    val mins = minutes % 60
+    return String.format("%02d:%02d", hours, mins)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ActivityEditorDialog(
+    activity: Activity,
+    onDismiss: () -> Unit,
+    onSave: (name: String, startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) -> Unit
+) {
+    var name by remember { mutableStateOf(activity.name) }
+    var showStartTimePicker by remember { mutableStateOf(false) }
+    var showEndTimePicker by remember { mutableStateOf(false) }
+    var startHour by remember { mutableStateOf(activity.startTimeMinutes / 60) }
+    var startMinute by remember { mutableStateOf(activity.startTimeMinutes % 60) }
+    var endHour by remember { mutableStateOf(activity.endTimeMinutes / 60) }
+    var endMinute by remember { mutableStateOf(activity.endTimeMinutes % 60) }
+    
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = if (activity.name.isEmpty()) stringResource(R.string.add_activity) else stringResource(R.string.edit_activity),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text(stringResource(R.string.activity_name)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+            
+            // Time range row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Start time
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = stringResource(R.string.from),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    
+                    TextButton(
+                        onClick = { showStartTimePicker = true }
+                    ) {
+                        Text(
+                            text = String.format("%02d:%02d", startHour, startMinute),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+                
+                Text(
+                    text = "→",
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
+                )
+                
+                // End time
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = stringResource(R.string.to),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    
+                    TextButton(
+                        onClick = { showEndTimePicker = true }
+                    ) {
+                        Text(
+                            text = String.format("%02d:%02d", endHour, endMinute),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+            
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.cancel))
+                }
+                
+                TextButton(
+                    onClick = {
+                        onSave(
+                            name,
+                            startHour,
+                            startMinute,
+                            endHour,
+                            endMinute
+                        )
+                    }
+                ) {
+                    Text(stringResource(R.string.save))
+                }
+            }
+        }
+    }
+    
+    // Start time picker dialog
+    if (showStartTimePicker) {
+        TimePickerDialog(
+            initialHour = startHour,
+            initialMinute = startMinute,
+            onDismiss = { showStartTimePicker = false },
+            onConfirm = { hour, minute ->
+                startHour = hour
+                startMinute = minute
+                showStartTimePicker = false
+            }
+        )
+    }
+    
+    // End time picker dialog
+    if (showEndTimePicker) {
+        TimePickerDialog(
+            initialHour = endHour,
+            initialMinute = endMinute,
+            onDismiss = { showEndTimePicker = false },
+            onConfirm = { hour, minute ->
+                endHour = hour
+                endMinute = minute
+                showEndTimePicker = false
+            }
+        )
     }
 }
 
@@ -838,174 +1167,84 @@ private fun DrawScope.drawSecondHand(accentColor: Color) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ControlsSection(
-    activityType: ActivityType,
-    startTime: String,
-    endTime: String,
-    primaryColor: Color,
-    onActivityTypeSelected: (ActivityType) -> Unit,
-    onStartTimeClicked: () -> Unit,
-    onEndTimeClicked: () -> Unit,
-    onStartClicked: () -> Unit
+private fun ActivityInfoCard(
+    activity: Activity,
+    isCurrent: Boolean,
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Card(
+        modifier = modifier
+            .fillMaxWidth(0.8f)
+            .padding(horizontal = 16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0x33FFFFFF)
+        ),
+        shape = RoundedCornerShape(12.dp)
     ) {
-        // Activity selector
-        var expanded by remember { mutableStateOf(false) }
-        val activityLabel = when (activityType) {
-            ActivityType.PLAY -> stringResource(R.string.play)
-            ActivityType.SLEEP -> stringResource(R.string.sleep)
-        }
-        
-        Text(
-            text = stringResource(R.string.select_activity),
-            style = MaterialTheme.typography.bodyLarge,
-            color = Color.White,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-        
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            TextButton(
-                onClick = { expanded = true },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0x33FFFFFF))
-            ) {
-                Text(
-                    text = activityLabel,
-                    color = Color.White,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    textAlign = TextAlign.Center
-                )
-            }
-            
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .background(MaterialTheme.colorScheme.surface)
-            ) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.play)) },
-                    onClick = {
-                        onActivityTypeSelected(ActivityType.PLAY)
-                        expanded = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.sleep)) },
-                    onClick = {
-                        onActivityTypeSelected(ActivityType.SLEEP)
-                        expanded = false
-                    }
-                )
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Time range selector
-        Text(
-            text = "Set Time Range",
-            style = MaterialTheme.typography.bodyLarge,
-            color = Color.White,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-        
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Start time
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "From",
-                    color = Color.White,
-                    fontSize = 14.sp
-                )
-                
-                TextButton(
-                    onClick = onStartTimeClicked,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0x33FFFFFF))
-                ) {
-                    Text(
-                        text = startTime,
-                        color = Color.White,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
-                }
-            }
-            
-            Text(
-                text = "→",
-                color = Color.White,
-                fontSize = 24.sp,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-            
-            // End time
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "To",
-                    color = Color.White,
-                    fontSize = 14.sp
-                )
-                
-                TextButton(
-                    onClick = onEndTimeClicked,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0x33FFFFFF))
-                ) {
-                    Text(
-                        text = endTime,
-                        color = Color.White,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
-                }
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        // Start button
-        Button(
-            onClick = onStartClicked,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4CAF50) // Green color for start button
-            ),
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = stringResource(R.string.start),
-                style = MaterialTheme.typography.bodyLarge
-            )
+            // Activity info
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                // Status indicator
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .background(
+                            color = if (isCurrent) Color(0xFF4CAF50) else Color(0xFF9E9E9E),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                )
+                
+                Spacer(modifier = Modifier.width(12.dp))
+                
+                // Activity details
+                Column {
+                    Text(
+                        text = if (isCurrent) stringResource(R.string.current_activity) else stringResource(R.string.next_activity),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                    
+                    Text(
+                        text = activity.name.ifEmpty { stringResource(R.string.unnamed_activity) },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Medium
+                    )
+                    
+                    Text(
+                        text = "${formatTimeForDisplay(activity.startTimeMinutes)} - ${formatTimeForDisplay(activity.endTimeMinutes)}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                }
+            }
+            
+            // Color indicators
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .background(activity.hourColor, RoundedCornerShape(4.dp))
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .background(activity.minuteColor, RoundedCornerShape(4.dp))
+                )
+            }
         }
     }
 } 

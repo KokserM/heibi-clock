@@ -15,4 +15,12 @@
     <string name="stop">Stop</string>
     <string name="theme">Theme</string>
     <string name="select_wallpaper">Select Wallpaper</string>
+    <string name="activity_name">Activity Name</string>
+    <string name="add_activity">Add Activity</string>
+    <string name="edit_activity">Edit Activity</string>
+    <string name="save">Save</string>
+    <string name="scheduled_activities">Scheduled Activities</string>
+    <string name="unnamed_activity">Unnamed Activity</string>
+    <string name="current_activity">Current Activity</string>
+    <string name="next_activity">Next Activity</string>
 </resources> 
