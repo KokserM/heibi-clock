@@ -22,14 +22,16 @@ import androidx.compose.ui.graphics.Color
 data class MinuteArcSegment(
     val startAngle: Float,
     val sweepAngle: Float,
-    val color: Color  // Add color to minute arc segment
+    val color: Color,  // Add color to minute arc segment
+    val transitionStartTime: Long = 0 // Timestamp when transition started
 )
 
 // Data class for hour arc segments
 data class HourArcSegment(
     val startAngle: Float,
     val sweepAngle: Float,
-    val color: Color  // Add color to hour arc segment
+    val color: Color,  // Add color to hour arc segment
+    val transitionStartTime: Long = 0 // Timestamp when transition started
 )
 
 class TimerViewModel : ViewModel() {
@@ -67,6 +69,9 @@ class TimerViewModel : ViewModel() {
     // Current activity completion notification
     private val _recentlyCompletedActivity = MutableStateFlow<Activity?>(null)
     val recentlyCompletedActivity: StateFlow<Activity?> = _recentlyCompletedActivity.asStateFlow()
+    
+    // Track recently activated activities
+    private val _activeTransitions = MutableStateFlow<Map<String, Long>>(emptyMap())
     
     private var timerJob: Job? = null
     private var clockJob: Job? = null
@@ -168,17 +173,27 @@ class TimerViewModel : ViewModel() {
     
     // Create a new activity for editing
     fun createNewActivity() {
-        // Default to current hour and next hour
-        val currentHourValue = _currentHour.value
-        val nextHour = (currentHourValue + 1) % 24
+        // Get start time based on previous activity or current time
+        val lastActivity = _activities.value.maxByOrNull { it.endTimeMinutes }
+        
+        val startTimeMinutes = if (lastActivity != null) {
+            // Use the end time of the last activity
+            lastActivity.endTimeMinutes
+        } else {
+            // Default to current hour if no previous activities
+            _currentHour.value * 60
+        }
+        
+        // Set end time to one hour after start time
+        val endTimeMinutes = startTimeMinutes + 60
         
         _currentActivity.value = Activity(
             id = UUID.randomUUID().toString(),
             name = "",
             hourColor = Color.Gray, // Placeholder, will be set on save
             minuteColor = Color.Gray, // Placeholder, will be set on save
-            startTimeMinutes = currentHourValue * 60,
-            endTimeMinutes = nextHour * 60
+            startTimeMinutes = startTimeMinutes,
+            endTimeMinutes = endTimeMinutes
         )
     }
     
@@ -304,6 +319,11 @@ class TimerViewModel : ViewModel() {
             return emptyList()
         }
         
+        val currentTimeMinutes = _currentHour.value * 60 + _currentMinute.value + (_currentSecond.value / 60f)
+        val currentTime = System.currentTimeMillis()
+        val activeTransitions = _activeTransitions.value.toMutableMap()
+        var transitionsUpdated = false
+        
         return _activities.value.filterNot { it.isCompleted }.map { activity ->
             val startHour = activity.startTimeMinutes / 60 % 12
             val startMinute = activity.startTimeMinutes % 60
@@ -327,13 +347,28 @@ class TimerViewModel : ViewModel() {
                 (endHourPosition - startHourPosition) * 30f
             }
             
-            // Check if current time is within this activity's time range
-            val currentTimeMinutes = _currentHour.value * 60 + _currentMinute.value + (_currentSecond.value / 60f)
+            // Check if activity is active now
+            val isActive = isCurrentTimeInRange(currentTimeMinutes, activity.startTimeMinutes, activity.endTimeMinutes)
+            
+            // Check if this is a newly activated activity and record transition start time
+            if (isActive && !activeTransitions.containsKey(activity.id)) {
+                activeTransitions[activity.id] = currentTime
+                transitionsUpdated = true
+            } else if (!isActive && activeTransitions.containsKey(activity.id)) {
+                // Remove from active transitions if no longer active
+                activeTransitions.remove(activity.id)
+                transitionsUpdated = true
+            }
+            
+            // Calculate opacity based on transition state
+            val transitionStartTime = activeTransitions[activity.id] ?: 0
+            val elapsedTime = if (transitionStartTime > 0) currentTime - transitionStartTime else 1000L
+            val transitionDuration = 1000L // 1 second transition
             
             if (isAfterEndTime(currentTimeMinutes, activity.startTimeMinutes, activity.endTimeMinutes)) {
                 // Activity completed - no arc
                 HourArcSegment(startAngle, 0f, activity.hourColor)
-            } else if (isCurrentTimeInRange(currentTimeMinutes, activity.startTimeMinutes, activity.endTimeMinutes)) {
+            } else if (isActive) {
                 // Activity in progress - calculate remaining arc
                 val currentAngle = getCurrentAngle() - 90f // Adjust for drawing
                 var remainingSweepAngle = 0f
@@ -354,10 +389,27 @@ class TimerViewModel : ViewModel() {
                     remainingSweepAngle = (endHourPosition * 30f) - ((_currentHour.value % 12) + (_currentMinute.value / 60f)) * 30f
                 }
                 
-                HourArcSegment(currentAngle, remainingSweepAngle, activity.hourColor)
-        } else {
-                // Future activity - full arc
-                HourArcSegment(startAngle, sweepAngle, activity.hourColor)
+                // Calculate opacity - transition from 0.4 to 1.0 over 1 second
+                val opacity = if (elapsedTime < transitionDuration) {
+                    0.4f + (0.6f * (elapsedTime.toFloat() / transitionDuration.toFloat()))
+                } else {
+                    1.0f
+                }
+                
+                HourArcSegment(
+                    currentAngle, 
+                    remainingSweepAngle, 
+                    activity.hourColor.copy(alpha = opacity),
+                    transitionStartTime
+                )
+            } else {
+                // Future activity - reduced opacity
+                HourArcSegment(startAngle, sweepAngle, activity.hourColor.copy(alpha = 0.4f))
+            }
+        }.also {
+            // Update active transitions if needed
+            if (transitionsUpdated) {
+                _activeTransitions.value = activeTransitions
             }
         }
     }
@@ -368,6 +420,10 @@ class TimerViewModel : ViewModel() {
             return emptyList()
         }
         
+        val currentTimeMinutes = _currentHour.value * 60 + _currentMinute.value + (_currentSecond.value / 60f)
+        val currentTime = System.currentTimeMillis()
+        val activeTransitions = _activeTransitions.value
+        
         return _activities.value.filterNot { it.isCompleted }.map { activity ->
             val startMinuteAngle = ((activity.startTimeMinutes % 60) * 6f) - 90f
             val endMinuteAngle = ((activity.endTimeMinutes % 60) * 6f) - 90f
@@ -375,27 +431,38 @@ class TimerViewModel : ViewModel() {
             // Calculate sweep angle, handling hour crossings
             val sweepAngle = if (activity.endTimeMinutes / 60 != activity.startTimeMinutes / 60) {
                 // Crosses an hour boundary
-                if (endMinuteAngle < startMinuteAngle) {
+                val hoursDifference = (activity.endTimeMinutes / 60) - (activity.startTimeMinutes / 60)
+                if (hoursDifference == 1 || (hoursDifference < 0 && hoursDifference > -23)) {
+                    // Crossing just one hour boundary
+                    val minutesToHourEnd = 60 - (activity.startTimeMinutes % 60)
+                    val minutesFromHourStart = activity.endTimeMinutes % 60
+                    (minutesToHourEnd + minutesFromHourStart) * 6f
+                } else if (endMinuteAngle < startMinuteAngle) {
                     (360f - startMinuteAngle) + endMinuteAngle
                 } else {
-                endMinuteAngle - startMinuteAngle
+                    endMinuteAngle - startMinuteAngle
                 }
             } else {
                 // Same hour
                 if (endMinuteAngle < startMinuteAngle) {
-                (360f - startMinuteAngle) + endMinuteAngle
+                    (360f - startMinuteAngle) + endMinuteAngle
                 } else {
                     endMinuteAngle - startMinuteAngle
                 }
             }
             
-            // Check if current time is within this activity's time range
-            val currentTimeMinutes = _currentHour.value * 60 + _currentMinute.value + (_currentSecond.value / 60f)
+            // Check if activity is active now
+            val isActive = isCurrentTimeInRange(currentTimeMinutes, activity.startTimeMinutes, activity.endTimeMinutes)
+            
+            // Calculate opacity based on transition state
+            val transitionStartTime = activeTransitions[activity.id] ?: 0
+            val elapsedTime = if (transitionStartTime > 0) currentTime - transitionStartTime else 1000L
+            val transitionDuration = 1000L // 1 second transition
             
             if (isAfterEndTime(currentTimeMinutes, activity.startTimeMinutes, activity.endTimeMinutes)) {
                 // Activity completed - no arc
                 MinuteArcSegment(startMinuteAngle, 0f, activity.minuteColor)
-            } else if (isCurrentTimeInRange(currentTimeMinutes, activity.startTimeMinutes, activity.endTimeMinutes)) {
+            } else if (isActive) {
                 // Activity in progress - calculate remaining arc
                 val minute = _currentMinute.value
                 val second = _currentSecond.value
@@ -424,10 +491,22 @@ class TimerViewModel : ViewModel() {
                     remainingSweepAngle += 360f
                 }
                 
-                MinuteArcSegment(currentMinuteAngle, remainingSweepAngle, activity.minuteColor)
+                // Calculate opacity - transition from 0.4 to 1.0 over 1 second
+                val opacity = if (elapsedTime < transitionDuration) {
+                    0.4f + (0.6f * (elapsedTime.toFloat() / transitionDuration.toFloat()))
+                } else {
+                    1.0f
+                }
+                
+                MinuteArcSegment(
+                    currentMinuteAngle, 
+                    remainingSweepAngle, 
+                    activity.minuteColor.copy(alpha = opacity),
+                    transitionStartTime
+                )
             } else {
-                // Future activity - full arc
-                MinuteArcSegment(startMinuteAngle, sweepAngle, activity.minuteColor)
+                // Future activity - reduced opacity
+                MinuteArcSegment(startMinuteAngle, sweepAngle, activity.minuteColor.copy(alpha = 0.4f))
             }
         }
     }
