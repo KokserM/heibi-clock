@@ -1,8 +1,14 @@
 package com.markus.clock.viewmodel
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.IBinder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.markus.clock.model.Activity
+import com.markus.clock.service.TimerService
 import com.markus.clock.ui.theme.ActivityColors
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -76,9 +82,50 @@ class TimerViewModel : ViewModel() {
     private var timerJob: Job? = null
     private var clockJob: Job? = null
     
+    // Service connection for TimerService
+    private var timerService: TimerService? = null
+    private var serviceBound = false
+    private lateinit var context: Context
+    
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as TimerService.TimerBinder
+            timerService = binder.getService()
+            serviceBound = true
+            syncStateWithService()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            serviceBound = false
+            timerService = null
+        }
+    }
+    
     init {
         // Start the real-time clock with a more frequent update interval
         startClock()
+    }
+    
+    fun setContext(ctx: Context) {
+        context = ctx
+        bindService()
+    }
+    
+    private fun bindService() {
+        val intent = Intent(context, TimerService::class.java)
+        context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+    }
+    
+    private fun syncStateWithService() {
+        timerService?.let { service ->
+            _activities.value = service.getActivities()
+            _isTimerRunning.value = service.isTimerRunning()
+            _currentHour.value = service.getCurrentHour()
+            _currentMinute.value = service.getCurrentMinute()
+            _currentSecond.value = service.getCurrentSecond()
+            _recentlyCompletedActivity.value = service.getRecentlyCompletedActivity()
+            _isAllActivitiesCompleted.value = service.isAllActivitiesCompleted()
+        }
     }
     
     private fun startClock() {
@@ -86,7 +133,11 @@ class TimerViewModel : ViewModel() {
         
         clockJob = viewModelScope.launch {
             while (true) {
-                updateCurrentTime()
+                if (serviceBound && timerService != null) {
+                    syncStateWithService()
+                } else {
+                    updateCurrentTime()
+                }
                 delay(100) // Update every 100 ms for smooth second hand movement
             }
         }
@@ -140,6 +191,9 @@ class TimerViewModel : ViewModel() {
         
         _activities.value = updatedList
         _currentActivity.value = null // Clear current activity
+        
+        // Update service with the new activities list
+        timerService?.setActivities(updatedList)
     }
     
     // Update an existing activity
@@ -157,6 +211,9 @@ class TimerViewModel : ViewModel() {
         }
         
         _currentActivity.value = null // Clear current activity
+        
+        // Update service with the new activities list
+        timerService?.setActivities(_activities.value)
     }
     
     // Delete an activity
@@ -164,6 +221,9 @@ class TimerViewModel : ViewModel() {
         val updatedList = _activities.value.toMutableList()
         updatedList.removeAll { it.id == activityId }
         _activities.value = updatedList
+        
+        // Update service with the new activities list
+        timerService?.setActivities(_activities.value)
     }
     
     // Set activity being edited
@@ -255,12 +315,24 @@ class TimerViewModel : ViewModel() {
         _isTimerRunning.value = true
         _isAllActivitiesCompleted.value = false
         _recentlyCompletedActivity.value = null
+        
+        // Update service
+        timerService?.setActivities(_activities.value)
+        timerService?.startTimer()
+        
+        // Start the service if not already running
+        if (!serviceBound) {
+            val intent = Intent(context, TimerService::class.java)
+            context.startForegroundService(intent)
+            bindService()
+        }
     }
     
     fun stopTimer() {
         _isTimerRunning.value = false
         _isAllActivitiesCompleted.value = false
         _recentlyCompletedActivity.value = null
+        timerService?.stopTimer()
     }
     
     fun formatTime(minutes: Int): String {
@@ -572,5 +644,13 @@ class TimerViewModel : ViewModel() {
     // Set activity name while editing
     fun setActivityName(name: String) {
         _currentActivity.value = _currentActivity.value?.copy(name = name)
+    }
+    
+    override fun onCleared() {
+        super.onCleared()
+        if (serviceBound) {
+            context.unbindService(connection)
+            serviceBound = false
+        }
     }
 } 

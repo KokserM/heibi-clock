@@ -19,12 +19,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -110,6 +112,12 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
     val hour by timerViewModel.currentHour.collectAsState()
     val minute by timerViewModel.currentMinute.collectAsState()
     val second by timerViewModel.currentSecond.collectAsState()
+    
+    // Set context for ViewModel to bind to service
+    val context = androidx.compose.ui.platform.LocalContext.current
+    LaunchedEffect(true) {
+        timerViewModel.setContext(context)
+    }
     
     // Clock hands
     val secondHandRotation = remember { Animatable(initialValue = 0f) }
@@ -306,7 +314,8 @@ fun ClockScreen(timerViewModel: TimerViewModel) {
                 // Analog Clock with hands and timer arc
                 Canvas(
                     modifier = Modifier
-                        .size(280.dp)
+                        .fillMaxSize(0.7f) // Use 70% of available space to adapt to screen size
+                        .aspectRatio(1f) // Ensure the Canvas is square to prevent deformation
                         .offset(y = if (isTimerRunning) (-40).dp else 0.dp) // Only offset when timer is running
                 ) {
                     // Apply the zoom scale animation

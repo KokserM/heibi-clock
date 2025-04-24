@@ -13,6 +13,7 @@ color teal_200
 color teal_700
 color white
 drawable gaming
+drawable hollow_knight
 drawable kirby
 drawable letters
 drawable mario_party

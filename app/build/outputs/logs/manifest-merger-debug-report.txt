@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:2:1-27:12
-INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:2:1-27:12
-INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:2:1-27:12
-INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:2:1-27:12
+ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:2:1-36:12
+INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:2:1-36:12
+INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:2:1-36:12
+INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:2:1-36:12
 MERGED from [androidx.activity:activity-ktx:1.8.2] C:\Users\MartinKokser\.gradle\caches\8.9\transforms\80f470cee34d9b4e839f8df38b499997\transformed\jetified-activity-ktx-1.8.2\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.material3:material3-android:1.2.1] C:\Users\MartinKokser\.gradle\caches\8.9\transforms\da5b792567ca5ce2fe301489ec492446\transformed\jetified-material3-release\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.activity:activity-compose:1.8.2] C:\Users\MartinKokser\.gradle\caches\8.9\transforms\becf5e82bde3e1fd3b5450ce4a54176a\transformed\jetified-activity-compose-1.8.2\AndroidManifest.xml:2:1-7:12
@@ -50,6 +50,7 @@ MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\MartinKo
 MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\MartinKokser\.gradle\caches\8.9\transforms\e010892f6b0c60513fa58df422c54df8\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:17:1-33:12
 MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\MartinKokser\.gradle\caches\8.9\transforms\1ff8075a4743f3627d38f269feb01b79\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:17:1-24:12
 	package
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:4:5-31
 		INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml
@@ -59,9 +60,17 @@ MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\MartinKokser\.gradle\cache
 		INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:6:5-77
+	android:name
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:6:22-74
+uses-permission#android.permission.FOREGROUND_SERVICE_DATA_SYNC
+ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:7:5-87
+	android:name
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:7:22-84
 application
-ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:5:5-25:19
-INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:5:5-25:19
+ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:9:5-34:19
+INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:9:5-34:19
 MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\MartinKokser\.gradle\caches\8.9\transforms\49a47a5c3e7b2790ce6ae4e6d0cbce38\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\MartinKokser\.gradle\caches\8.9\transforms\49a47a5c3e7b2790ce6ae4e6d0cbce38\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\MartinKokser\.gradle\caches\8.9\transforms\d197f6850b542303f72eafbf5e56d9da\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:23:5-33:19
@@ -83,43 +92,53 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\MartinKokser\.grad
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.12.0] C:\Users\MartinKokser\.gradle\caches\8.9\transforms\5993a14cf3f3e89f22ed8cfe2c52e5d2\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:12:9-35
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:16:9-35
 	android:label
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:10:9-41
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:14:9-41
 	android:fullBackupContent
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:8:9-54
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:12:9-54
 	android:roundIcon
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:11:9-54
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:15:9-54
 	tools:targetApi
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:14:9-29
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:18:9-29
 	android:icon
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:9:9-43
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:13:9-43
 	android:allowBackup
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:6:9-35
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:10:9-35
 	android:theme
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:13:9-49
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:17:9-49
 	android:dataExtractionRules
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:7:9-65
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:11:9-65
 activity#com.markus.clock.MainActivity
-ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:15:9-24:20
+ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:19:9-28:20
 	android:screenOrientation
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:19:13-49
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:23:13-49
 	android:exported
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:17:13-36
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:21:13-36
 	android:theme
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:18:13-53
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:22:13-53
 	android:name
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:16:13-41
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:20:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:20:13-23:29
+ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:24:13-27:29
 action#android.intent.action.MAIN
-ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:21:17-69
+ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:25:17-69
 	android:name
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:21:25-66
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:25:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:22:17-77
+ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:26:17-77
 	android:name
-		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:22:27-74
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:26:27-74
+service#com.markus.clock.service.TimerService
+ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:29:9-33:56
+	android:enabled
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:31:13-35
+	android:exported
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:32:13-37
+	android:foregroundServiceType
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:33:13-53
+	android:name
+		ADDED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml:30:13-49
 uses-sdk
 INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Projects\Hobby\markus-clock\app\src\main\AndroidManifest.xml

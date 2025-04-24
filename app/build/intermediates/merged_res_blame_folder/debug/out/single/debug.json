@@ -1,78 +1,82 @@
 [
     {
-        "merged": "com.markus.clock.app-merged_res-4:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.markus.clock.app-main-6:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\mipmap-xhdpi_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\mipmap-xhdpi\\ic_launcher_round.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/xml_data_extraction_rules.xml.flat",
-        "source": "com.markus.clock.app-main-6:/xml/data_extraction_rules.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\drawable_stars_background.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\drawable\\stars_background.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/drawable-xxhdpi_mario_party.jpg.flat",
-        "source": "com.markus.clock.app-main-6:/drawable-xxhdpi/mario_party.jpg"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\mipmap-xhdpi_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\mipmap-xhdpi\\ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/drawable-xxhdpi_kirby.jpg.flat",
-        "source": "com.markus.clock.app-main-6:/drawable-xxhdpi/kirby.jpg"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\mipmap-hdpi_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\mipmap-hdpi\\ic_launcher_round.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.markus.clock.app-main-6:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\drawable_toys_background.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\drawable\\toys_background.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/mipmap-xhdpi_ic_launcher_round.xml.flat",
-        "source": "com.markus.clock.app-main-6:/mipmap-xhdpi/ic_launcher_round.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\mipmap-mdpi_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\mipmap-mdpi\\ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/xml_backup_rules.xml.flat",
-        "source": "com.markus.clock.app-main-6:/xml/backup_rules.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\xml_data_extraction_rules.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\xml\\data_extraction_rules.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/drawable-xxhdpi_gaming.jpg.flat",
-        "source": "com.markus.clock.app-main-6:/drawable-xxhdpi/gaming.jpg"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\mipmap-hdpi_ic_launcher.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\mipmap-hdpi\\ic_launcher.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/mipmap-mdpi_ic_launcher_round.xml.flat",
-        "source": "com.markus.clock.app-main-6:/mipmap-mdpi/ic_launcher_round.xml"
+        "merged": "com.markus.clock.app-merged_res-4:/drawable-xxhdpi_hollow_knight.jpg.flat",
+        "source": "com.markus.clock.app-main-6:/drawable-xxhdpi/hollow_knight.jpg"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/mipmap-xhdpi_ic_launcher_foreground.xml.flat",
-        "source": "com.markus.clock.app-main-6:/mipmap-xhdpi/ic_launcher_foreground.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\drawable-xxhdpi_kirby.jpg.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\drawable-xxhdpi\\kirby.jpg"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/mipmap-hdpi_ic_launcher_foreground.xml.flat",
-        "source": "com.markus.clock.app-main-6:/mipmap-hdpi/ic_launcher_foreground.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\mipmap-xhdpi_ic_launcher.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\mipmap-xhdpi\\ic_launcher.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/mipmap-mdpi_ic_launcher.xml.flat",
-        "source": "com.markus.clock.app-main-6:/mipmap-mdpi/ic_launcher.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/mipmap-xhdpi_ic_launcher.xml.flat",
-        "source": "com.markus.clock.app-main-6:/mipmap-xhdpi/ic_launcher.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\mipmap-mdpi_ic_launcher.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\mipmap-mdpi\\ic_launcher.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/drawable-xxhdpi_letters.jpg.flat",
-        "source": "com.markus.clock.app-main-6:/drawable-xxhdpi/letters.jpg"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\drawable-xxhdpi_gaming.jpg.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\drawable-xxhdpi\\gaming.jpg"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/mipmap-hdpi_ic_launcher_round.xml.flat",
-        "source": "com.markus.clock.app-main-6:/mipmap-hdpi/ic_launcher_round.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\mipmap-mdpi_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\mipmap-mdpi\\ic_launcher_round.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/drawable_toys_background.xml.flat",
-        "source": "com.markus.clock.app-main-6:/drawable/toys_background.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\xml_backup_rules.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\xml\\backup_rules.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/mipmap-mdpi_ic_launcher_foreground.xml.flat",
-        "source": "com.markus.clock.app-main-6:/mipmap-mdpi/ic_launcher_foreground.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\drawable-xxhdpi_letters.jpg.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\drawable-xxhdpi\\letters.jpg"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/drawable_stars_background.xml.flat",
-        "source": "com.markus.clock.app-main-6:/drawable/stars_background.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\mipmap-anydpi-v26\\ic_launcher.xml"
     },
     {
-        "merged": "com.markus.clock.app-merged_res-4:/mipmap-hdpi_ic_launcher.xml.flat",
-        "source": "com.markus.clock.app-main-6:/mipmap-hdpi/ic_launcher.xml"
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\mipmap-hdpi_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\mipmap-hdpi\\ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-merged_res-4:\\drawable-xxhdpi_mario_party.jpg.flat",
+        "source": "C:\\Users\\MartinKokser\\.gradle\\daemon\\8.9\\com.markus.clock.app-main-6:\\drawable-xxhdpi\\mario_party.jpg"
     }
 ]
